@@ -1,0 +1,9 @@
+F:\COM\串口调试\串口调试\bin\Debug\串口调试.exe
+F:\COM\串口调试\串口调试\bin\Debug\串口调试.pdb
+F:\COM\串口调试\串口调试\obj\x86\Debug\ResolveAssemblyReference.cache
+F:\COM\串口调试\串口调试\obj\x86\Debug\串口调试.Form1.resources
+F:\COM\串口调试\串口调试\obj\x86\Debug\串口调试.Properties.Resources.resources
+F:\COM\串口调试\串口调试\obj\x86\Debug\GenerateResource-ResGen.read.1.tlog
+F:\COM\串口调试\串口调试\obj\x86\Debug\GenerateResource-ResGen.write.1.tlog
+F:\COM\串口调试\串口调试\obj\x86\Debug\串口调试.exe
+F:\COM\串口调试\串口调试\obj\x86\Debug\串口调试.pdb
