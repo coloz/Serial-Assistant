@@ -1,8 +1,8 @@
-Serial-Assistant
+SerialPort-Assistant For Arduino
+================================
+author：奈何col
+================================
+language：C#
 ================
-作者：奈何col
-================
-语言：C#
-================
-开发环境：VS、Monodevelop
+IDE：SharpDevelop
 ================
