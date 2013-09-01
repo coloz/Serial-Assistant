@@ -1,8 +1,9 @@
 SerialPort-Assistant For Arduino
 ================================
-author：奈何col
+author:奈何col
 ================================
-language：C#
+language:C#
 ================
-IDE：SharpDevelop
+IDE:SharpDevelop
 ================
+License:AGPLv3
