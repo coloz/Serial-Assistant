@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace 串口调试
+namespace SPA
 {
     static class Program
     {
@@ -14,7 +14,7 @@ namespace 串口调试
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new OJ_Serial());
         }
     }
 }
