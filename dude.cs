@@ -13,7 +13,17 @@ namespace SPA
 {
     public partial class OJ_Serial
     {
+        
         Process avrdude = new Process();
+
+        //private OJ_Serial()
+        //{
+        //    this.backgroundWorker1.WorkerSupportsCancellation = true;
+        //    this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+        //}
+
+
+
         String Leonardo_SerialPort;
         /*Hex下载模式*/
         //组建avrdude所需参数
@@ -54,7 +64,7 @@ namespace SPA
                     IC_info = "atmega1280";
                     speed = "57600";
                     break;
-                case ("Arduino Leonardo or Micro"):
+                case ("Arduino Leonardo or Micro or Yún"):
                     IC_info = "atmega32u4";
                     speed = "57600";
                     Board = "-cavr109";
@@ -129,6 +139,7 @@ namespace SPA
         //调用avrdude
         private void StartThread()
         {
+            
             if (backgroundWorker1.IsBusy != true)
             {
                 if (_SerialPort.IsOpen)
@@ -202,12 +213,20 @@ namespace SPA
         //开始下载按键
         private void Start_avrdude_Click(object sender, EventArgs e)
         {
-            if ((Board_info.Text != "") && (Serial_info.Text != "") && (File_Name.Text != "..."))
+            try
             {
-                StartThread();
+                if ((Board_info.Text != "") && (Serial_info.Text != "") && (File_Name.Text != "..."))
+                {
+
+                    StartThread();
+                }
+                else
+                    MessageBox.Show("请先选择Arduino型号、串口及Hex文件");
             }
-            else
-                MessageBox.Show("请先选择Arduino型号、串口及Hex文件");
+            catch 
+            {
+                //MessageBox.Show("串口可能被占用");
+            }
         }
         //avrdude线程结束通知
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -255,13 +274,16 @@ namespace SPA
 
                 avrdude = new Process();
                 avrdude.StartInfo.UseShellExecute = false;
-                avrdude.StartInfo.FileName = "avrdude\\avrdude.exe";
+                avrdude.StartInfo.FileName = "avrdude\\atprogram.exe";
                 avrdude.StartInfo.CreateNoWindow = true;
                 avrdude.StartInfo.RedirectStandardOutput = true;
                 avrdude.StartInfo.RedirectStandardError = true;
-                avrdude.StartInfo.Arguments = Set_board_info();
+                avrdude.EnableRaisingEvents = true;
+                //avrdude.StartInfo.Arguments = Set_board_info();
+                avrdude.StartInfo.Arguments = "-t avrispmk2 -i ISP -d atmega2560 chiperase program -fl -f D:\\MKIIread.hex verify -fl -f D:\\MKIIread.hex";
                 avrdude.OutputDataReceived += new DataReceivedEventHandler(debug_output);
                 avrdude.ErrorDataReceived += new DataReceivedEventHandler(debug_output);
+                avrdude.Exited += avrdude_Exited;
                 avrdude.Start();
                 avrdude.BeginOutputReadLine();
                 avrdude.BeginErrorReadLine();
@@ -273,6 +295,11 @@ namespace SPA
                 debug_box.SelectionStart = debug_box.TextLength;
                 debug_box.Paste(DateTime.Now + "   OPEN JUMPER Serial Assistant:未知错误！\r\n");
             }
+        }
+
+        void avrdude_Exited(object sender, EventArgs e)
+        {
+            Start_avrdude.Text = "开始下载";
         }
 
         private void debug_output(object sender, DataReceivedEventArgs e)

@@ -35,6 +35,7 @@ namespace SPA
             comboBox2.Text = "8";
             comboBox3.Text = "无";
             comboBox4.Text = "1";
+
             //RX_Browser.DoubleBuffered = true;
             //RX_Browser.DocumentStream = htmlbox;
 
@@ -152,7 +153,10 @@ namespace SPA
                 else temp = 0;
                 for (int i = temp; i < bytes.Length; i++)
                 {
-                    HEX += (char)bytes[i];
+                    if ((bytes[i] == 0x0a) || (bytes[i] == 0x0d))
+                        HEX += "\r\n";
+                    else
+                        HEX += (char)bytes[i];
                 }
             }
             return HEX;
@@ -170,47 +174,45 @@ namespace SPA
             }
             return returnBytes;
         }
+
+        //用于记录换行符
         Boolean flagRN = false;
         //接收
         private void _SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            Start_RXthread();
+            //RX_backgroundWorker.RunWorkerAsync();
+            RX_thread();
 
         }
-        //调用avrdude
-        private void Start_RXthread()
+        private void RX_backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (RX_backgroundWorker.IsBusy != true) { RX_backgroundWorker.RunWorkerAsync(); }
+            
         }
+
+        //private void Start_RXthread()
+        //{
+        //    if (RX_backgroundWorker.IsBusy != true) {  }
+        //}
 
         private void RX_thread()
         {
             int buffersize = _SerialPort.BytesToRead;   //十六进制数的大小
             byte[] buffer = new Byte[buffersize];   //创建缓冲区
             _SerialPort.Read(buffer, 0, buffersize);
-            //RXbox.SelectionColor = Color.Black;
             if (RX_HEX_checkBox.Checked)
             {
-                //RXbox.SelectionColor = Color.Blue;
                 RXbox.AppendText(HEX_To_String(buffer));
-                //RXbox.SelectionColor = Color.Black;
             }
             else
             {
                 try
                 {
+                    RXbox.AppendText(HEX_To_ASCII(buffer));
                     //蛋疼的处理richtextbox
                     //richtextbox中\n \r两者都是换行
-                    if ((buffer[0] == 0x0A) && (flagRN)) { } else { flagRN = false; }
-                    //RXbox.AppendText(HEX_To_ASCII(buffer));
-                    //RXbox_Ex.Focus();
-                    //RX_Browser.DocumentText = HEX_To_ASCII(buffer);
-                    //htmlbox.Write(buffer, 0, buffer.Length);
-                    //RXbox.Text += HEX_To_ASCII(buffer);
-                    RXbox.AppendText(HEX_To_ASCII(buffer));
-                    //if (RXbox_AutoScroll) { RXbox.ScrollToCaret(); }
-                    //if (Scroll_backgroundWorker.IsBusy != true) { Scroll_backgroundWorker.RunWorkerAsync(); } 
-                    if (buffer[buffer.Length - 1] == 0x0D) { flagRN = true; }
+                    //if ((buffer[0] == 0x0A) && (flagRN)) { } else { flagRN = false; }
+                    
+                    //if (buffer[buffer.Length - 1] == 0x0D) { flagRN = true; }
                 }
                 catch { }
 
@@ -224,6 +226,7 @@ namespace SPA
             RXL = RXL + buffer.Length;
             toolStripStatusLabel_R.Text = RXL.ToString();
         }
+
         //发送
         private void _Serialport_tx(string tx_info)
         {
@@ -489,6 +492,7 @@ namespace SPA
         private void Reset_button_Click(object sender, EventArgs e)
         {
             _SerialPort.DtrEnable = true;
+            _SerialPort.RtsEnable = true;
             //Timer Dtr_timer = new Timer();
             Dtr_timer.Interval = 20;
             Dtr_timer.Tick += Dtr_timer_Tick;
@@ -499,6 +503,7 @@ namespace SPA
         {
             //throw new NotImplementedException();
             _SerialPort.DtrEnable = false;
+            _SerialPort.RtsEnable = false;
             //Dtr_timer.Stop();
             Dtr_timer.Enabled = false;
         }
@@ -512,7 +517,6 @@ namespace SPA
         {
             NameOfSerial.Items.Clear();
             NewSerial();
-
         }
         //自动滚动
         private void scroll_checkBox_CheckedChanged(object sender, EventArgs e)
@@ -527,12 +531,17 @@ namespace SPA
             RXbox_AutoScroll = !RXbox_AutoScroll;
         }
 
-        private void RX_backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void comboBox6_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RX_thread();
+
         }
 
 
+
+        private void label19_Click(object sender, EventArgs e)
+        {
+
+        }
 
 
     }
